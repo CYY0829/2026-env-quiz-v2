@@ -702,7 +702,6 @@ body {
     <div class="subtitle">第二输油处 · 曲子集输作业区</div>
     <div class="badge-row">
       <span class="badge">🌍 美丽长庆 · 绿色同行</span>
-      <span class="badge">⚖️ 以案为戒 · 实干护航</span>
       <span class="badge">📅 2026年6月5日</span>
     </div>
   </div>
@@ -761,11 +760,13 @@ body {
 
     <div class="rules">
       <h3 style="color:var(--primary);margin-bottom:8px;">📋 竞赛规则</h3>
+      <div>🕐 竞赛时间：<strong>6月5日 10:00—20:00</strong>（仅此时间段可答题）</div>
       <div>📝 系统随机抽取 <strong>45 道</strong> 单选题</div>
       <div>💯 满分 <strong>100 分</strong>（每题约 2.22 分）</div>
       <div>⏱️ 计时器从第一题开始计时</div>
       <div>📊 排名规则：<strong>正确率优先 → 用时越短排名越前</strong></div>
-      <div>🏅 成绩永久保存，可反复挑战</div>
+      <div>🌐 <strong>云端共享排行榜</strong>，所有人成绩实时可见</div>
+      <div>🏅 成绩永久保存至云端，可反复挑战</div>
     </div>
 
     <div class="name-input-row">
@@ -794,7 +795,8 @@ body {
 
   <!-- 排行榜 -->
   <div class="card" id="rankingCard">
-    <h2>🏅 排行榜</h2>
+    <h2>🏅 排行榜（云端共享）</h2>
+    <p style="color:var(--text-light);font-size:0.85em;margin-bottom:8px;">🌐 所有参赛者成绩实时同步，全民可见</p>
     <div id="rankingContent"></div>
   </div>
 </section>
@@ -2037,7 +2039,78 @@ Q('固体废物综合治理行动计划','"固废十条"对地方政府用地保
 
 console.log(`题库加载完毕，共 ${ALL_QUESTIONS.length} 道题目`);
 
-// ==================== 全局状态 ====================
+// ==================== 共享排行榜 API ====================
+const RANKING_API = 'https://jsonblob.com/api/jsonBlob/019e882f-cc5e-7ef3-ae16-bd3e4f22b2b4';
+let sharedRankings = [];
+
+async function fetchRankings() {
+  try {
+    const resp = await fetch(RANKING_API);
+    if (resp.ok) sharedRankings = await resp.json();
+    else sharedRankings = [];
+  } catch(e) {
+    sharedRankings = [];
+  }
+  return sharedRankings;
+}
+
+async function saveRanking(record) {
+  // 先获取最新排名
+  await fetchRankings();
+  sharedRankings.push(record);
+  // 按得分降序 → 用时升序
+  sharedRankings.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return a.time - b.time;
+  });
+  // 保留前100名
+  sharedRankings = sharedRankings.slice(0, 100);
+  try {
+    await fetch(RANKING_API, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(sharedRankings)
+    });
+  } catch(e) {
+    console.error('排名保存失败:', e);
+    // 降级到 localStorage
+    let local = JSON.parse(localStorage.getItem('envQuizRankings') || '[]');
+    local.push(record);
+    localStorage.setItem('envQuizRankings', JSON.stringify(local));
+  }
+}
+
+async function clearSharedRankings() {
+  try {
+    await fetch(RANKING_API, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: '[]'
+    });
+    sharedRankings = [];
+  } catch(e) {
+    localStorage.removeItem('envQuizRankings');
+  }
+}
+
+async function loadSharedTestData() {
+  const testData = [
+    {"name":"张建国","score":100,"correct":45,"total":45,"time":672,"date":"2026/6/2 09:37:04"},
+    {"name":"陈低碳","score":100,"correct":45,"total":45,"time":822,"date":"2026/6/2 10:09:07"},
+    {"name":"王绿水","score":93.33,"correct":42,"total":45,"time":261,"date":"2026/6/2 13:54:51"},
+    {"name":"李环保","score":93.33,"correct":42,"total":45,"time":863,"date":"2026/6/2 11:54:58"},
+    {"name":"赵青山","score":88.89,"correct":40,"total":45,"time":550,"date":"2026/6/2 13:37:11"},
+    {"name":"刘美丽","score":84.44,"correct":38,"total":45,"time":464,"date":"2026/6/2 08:10:31"}
+  ];
+  try {
+    await fetch(RANKING_API, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(testData)
+    });
+    sharedRankings = testData;
+  } catch(e) {}
+}
 let currentTab = 'study';
 let studyPage = 1;
 const PAGE_SIZE = 20;
@@ -2154,6 +2227,21 @@ function shuffleArray(arr) {
 }
 
 function startCompetition() {
+  // 竞赛时间限制：仅6月5日 10:00-20:00
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const day = now.getDate();
+  const hour = now.getHours();
+
+  if (month !== 6 || day !== 5) {
+    document.getElementById('nameError').textContent = '⚠️ 答题竞赛仅在6月5日开放，请届时参加！';
+    return;
+  }
+  if (hour < 10 || hour >= 20) {
+    document.getElementById('nameError').textContent = '⚠️ 答题竞赛开放时间为 10:00-20:00，请在此时间段内参加！';
+    return;
+  }
+
   const name = document.getElementById('playerName').value.trim();
   if (!name) {
     document.getElementById('nameError').textContent = '⚠️ 请先输入您的姓名';
@@ -2266,7 +2354,7 @@ function submitQuiz() {
   });
   const score = Math.round((correctCount / 45) * 100 * 100) / 100;
 
-  // 保存成绩到 localStorage
+  // 保存成绩到共享排行榜
   const playerName = document.getElementById('playerName').value.trim();
   const record = {
     name: playerName,
@@ -2277,17 +2365,11 @@ function submitQuiz() {
     date: new Date().toLocaleString('zh-CN')
   };
 
-  let rankings = JSON.parse(localStorage.getItem('envQuizRankings') || '[]');
-  rankings.push(record);
-  rankings.sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-    return a.time - b.time;
+  // 异步保存到共享排行榜
+  saveRanking(record).then(() => {
+    renderRanking();
   });
-  // 保留前50名
-  rankings = rankings.slice(0, 50);
-  localStorage.setItem('envQuizRankings', JSON.stringify(rankings));
 
-  // 显示结果
   document.getElementById('quiz-interface').style.display = 'none';
   document.getElementById('result-interface').style.display = 'block';
 
@@ -2328,8 +2410,7 @@ function submitQuiz() {
 }
 
 function getPlayerRank(record) {
-  let rankings = JSON.parse(localStorage.getItem('envQuizRankings') || '[]');
-  const idx = rankings.findIndex(r =>
+  const idx = sharedRankings.findIndex(r =>
     r.name === record.name && r.score === record.score && r.time === record.time && r.date === record.date
   );
   return idx >= 0 ? idx + 1 : '?';
@@ -2375,8 +2456,9 @@ function showQuizReview() {
 }
 
 // ==================== 排行榜 ====================
-function renderRanking() {
-  const rankings = JSON.parse(localStorage.getItem('envQuizRankings') || '[]');
+async function renderRanking() {
+  await fetchRankings();
+  const rankings = sharedRankings;
   const container = document.getElementById('rankingContent');
 
   if (rankings.length === 0) {
@@ -2424,8 +2506,8 @@ function renderRanking() {
 
   html += '</tbody></table>';
 
-  if (rankings.length >= 50) {
-    html += '<p style="text-align:center;color:var(--text-light);margin-top:10px;font-size:0.85em;">排行榜仅保留前50名</p>';
+  if (rankings.length >= 100) {
+    html += '<p style="text-align:center;color:var(--text-light);margin-top:10px;font-size:0.85em;">排行榜仅保留前100名</p>';
   }
 
   html += `
@@ -2439,29 +2521,20 @@ function renderRanking() {
 }
 
 function clearRankings() {
-  if (confirm('确定要清空所有排行榜数据吗？此操作不可恢复。')) {
-    localStorage.removeItem('envQuizRankings');
-    renderRanking();
+  if (confirm('确定要清空排行榜吗？此操作不可恢复，将影响所有用户。')) {
+    clearSharedRankings().then(() => renderRanking());
   }
 }
 
 function loadTestData() {
-  if (localStorage.getItem('envQuizRankings')) {
+  if (sharedRankings.length > 0) {
     if (!confirm('排行榜已有数据，确定要覆盖为测试数据吗？')) return;
   }
-  const testData = [
-    {"name":"张建国","score":100,"correct":45,"total":45,"time":672,"date":"2026/6/2 09:37:04"},
-    {"name":"陈低碳","score":100,"correct":45,"total":45,"time":822,"date":"2026/6/2 10:09:07"},
-    {"name":"王绿水","score":93.33,"correct":42,"total":45,"time":261,"date":"2026/6/2 13:54:51"},
-    {"name":"李环保","score":93.33,"correct":42,"total":45,"time":863,"date":"2026/6/2 11:54:58"},
-    {"name":"赵青山","score":88.89,"correct":40,"total":45,"time":550,"date":"2026/6/2 13:37:11"},
-    {"name":"刘美丽","score":84.44,"correct":38,"total":45,"time":464,"date":"2026/6/2 08:10:31"}
-  ];
-  localStorage.setItem('envQuizRankings', JSON.stringify(testData));
-  renderRanking();
-  // 滚动到排行榜
-  document.getElementById('rankingCard').scrollIntoView({ behavior: 'smooth' });
-  alert('✅ 6人测试数据已加载！\n\n🏆 排行榜已更新，请查看下方排名。\n📊 排序规则：正确率优先 → 用时短者排名靠前');
+  loadSharedTestData().then(() => {
+    renderRanking();
+    document.getElementById('rankingCard').scrollIntoView({ behavior: 'smooth' });
+    alert('✅ 6人测试数据已加载！\n\n🏆 排行榜已更新（云端共享），请查看下方排名。');
+  });
 }
 
 function escapeHtml(str) {
@@ -2487,7 +2560,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ==================== 初始化 ====================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  await fetchRankings();
   renderStudyQuestions();
   renderRanking();
 });
