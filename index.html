@@ -766,7 +766,7 @@ body {
       <div>⏱️ 计时器从第一题开始计时</div>
       <div>📊 排名规则：<strong>正确率优先 → 用时越短排名越前</strong></div>
       <div>🌐 <strong>云端共享排行榜</strong>，所有人成绩实时可见</div>
-      <div>🏅 成绩永久保存至云端，可反复挑战</div>
+      <div>🚫 <strong>每人仅限挑战一次</strong>，成绩永久保存至云端</div>
     </div>
 
     <div class="name-input-row">
@@ -2226,7 +2226,7 @@ function shuffleArray(arr) {
   return a;
 }
 
-function startCompetition() {
+async function startCompetition() {
   // 竞赛时间限制：仅6月5日 10:00-20:00
   const now = new Date();
   const month = now.getMonth() + 1;
@@ -2247,7 +2247,20 @@ function startCompetition() {
     document.getElementById('nameError').textContent = '⚠️ 请先输入您的姓名';
     return;
   }
-  document.getElementById('nameError').textContent = '';
+
+
+	  // 每人仅限挑战一次：检查云端和本地是否已有该姓名成绩
+	  await fetchRankings();
+	  let alreadyPlayed = sharedRankings.some(r => r.name === name);
+	  if (!alreadyPlayed) {
+	    const local = JSON.parse(localStorage.getItem("envQuizRankings") || "[]");
+	    alreadyPlayed = local.some(r => r.name === name);
+	  }
+	  if (alreadyPlayed) {
+	    document.getElementById("nameError").textContent = "⚠️ 您已参加过答题竞赛，每人仅限挑战一次！";
+	    return;
+	  }
+	  document.getElementById("nameError").textContent = "";
 
   quizQuestions = shuffleArray(ALL_QUESTIONS).slice(0, 45);
   quizCurrentIndex = 0;
@@ -2400,7 +2413,7 @@ function submitQuiz() {
       </div>
     </div>
     <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <button class="btn btn-primary" onclick="retryQuiz()">🔄 再次挑战</button>
+      <p style="color:var(--text-light);font-size:0.9em;margin:0;">✅ 您已完成挑战，每人仅限一次</p>
       <button class="btn btn-outline" onclick="showQuizReview()">📝 查看错题</button>
     </div>
     <div id="quizReview" style="text-align:left;margin-top:20px;display:none;"></div>
