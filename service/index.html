@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="AI智能服务｜PPT定制·文案代写·简历优化·脚本开发｜当天交付">
+<title>AI智能服务 | 高效低价</title>
+<style>
+  :root { --c1:#6366f1; --c2:#8b5cf6; --bg:#f8f7ff; --card:#fff; --text:#1e1b4b; --sub:#6b7280; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  .hero { background:linear-gradient(135deg, var(--c1), var(--c2)); color:#fff; padding:40px 20px; text-align:center; border-radius:0 0 30px 30px; }
+  .hero h1 { font-size:28px; margin-bottom:8px; }
+  .hero p { opacity:0.9; font-size:15px; }
+  .hero .badge { display:inline-block; background:rgba(255,255,255,0.2); padding:4px 16px; border-radius:20px; font-size:13px; margin-top:12px; }
+  .container { max-width:500px; margin:0 auto; padding:20px; }
+  .card { background:var(--card); border-radius:16px; padding:20px; margin-bottom:16px; box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+  .card h3 { font-size:18px; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+  .card .desc { color:var(--sub); font-size:14px; margin-bottom:12px; }
+  .card .tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+  .card .tags span { background:#eef2ff; color:var(--c1); padding:2px 10px; border-radius:12px; font-size:12px; }
+  .card .price { font-size:22px; font-weight:700; color:var(--c1); }
+  .card .price small { font-size:13px; color:var(--sub); font-weight:400; }
+  .card .btn-cta { display:block; width:100%; padding:12px; background:linear-gradient(135deg,var(--c1),var(--c2)); color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; margin-top:12px; text-align:center; text-decoration:none; }
+  .card .btn-cta:active { opacity:0.85; }
+  .why { text-align:center; margin:24px 0; }
+  .why h3 { font-size:18px; margin-bottom:16px; }
+  .why-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .why-item { background:var(--card); border-radius:12px; padding:16px; text-align:center; box-shadow:0 1px 8px rgba(0,0,0,0.04); }
+  .why-item .icon { font-size:28px; margin-bottom:6px; }
+  .why-item .title { font-size:14px; font-weight:600; }
+  .why-item .sub { font-size:12px; color:var(--sub); }
+  .footer { text-align:center; padding:24px; color:var(--sub); font-size:13px; }
+  .arrow { animation:bounce 1.5s infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🤖 AI 智能服务</h1>
+  <p>AI高效出稿 + 专业人工精修 | 当天交付</p>
+  <div class="badge">⚡ 30分钟急速交付</div>
+</div>
+
+<div class="container">
+
+  <!-- 服务1：PPT定制 -->
+  <div class="card">
+    <h3>📊 AI商业PPT定制</h3>
+    <div class="desc">工作汇报 / 商业计划书 / 路演PPT / 述职报告 — 精美模板+数据可视化</div>
+    <div class="tags">
+      <span>当天交付</span><span>免费修改</span><span>PPTX格式</span>
+    </div>
+    <div class="price">30<span style="font-size:15px">元起</span> <small>/份</small></div>
+    <a class="btn-cta" href="weixin://" onclick="copyWechat();return false;">📱 微信咨询下单</a>
+  </div>
+
+  <!-- 服务2：文案代写 -->
+  <div class="card">
+    <h3>✍️ AI文案代写</h3>
+    <div class="desc">公众号文章 / 小红书笔记 / 抖音脚本 / 产品文案 / 演讲稿 / 商务邮件</div>
+    <div class="tags">
+      <span>原创</span><span>3次修改</span><span>Word交付</span>
+    </div>
+    <div class="price">20<span style="font-size:15px">元起</span> <small>/篇</small></div>
+    <a class="btn-cta" href="weixin://" onclick="copyWechat();return false;">📱 微信咨询下单</a>
+  </div>
+
+  <!-- 服务3：简历优化 -->
+  <div class="card">
+    <h3>📋 AI简历优化精修</h3>
+    <div class="desc">应届生/跳槽简历 — STAR法则重写 + 排版美化 + 岗位匹配建议</div>
+    <div class="tags">
+      <span>1小时交付</span><span>HR视角把关</span><span>隐私保密</span>
+    </div>
+    <div class="price">20<span style="font-size:15px">元</span> <small>/份</small></div>
+    <a class="btn-cta" href="weixin://" onclick="copyWechat();return false;">📱 微信咨询下单</a>
+  </div>
+
+  <!-- 服务4：Excel脚本 -->
+  <div class="card">
+    <h3>🐍 Excel/办公自动化脚本</h3>
+    <div class="desc">表格批量处理 / 数据清洗 / 自动报表 / 邮件发送 — Python定制脚本</div>
+    <div class="tags">
+      <span>源码交付</span><span>中文注释</span><span>1-3天</span>
+    </div>
+    <div class="price">100<span style="font-size:15px">元起</span> <small>/个</small></div>
+    <a class="btn-cta" href="weixin://" onclick="copyWechat();return false;">📱 微信咨询下单</a>
+  </div>
+
+  <!-- 服务5：AI环境部署 -->
+  <div class="card">
+    <h3>🔧 AI编程环境部署</h3>
+    <div class="desc">Claude Code / OpenClaw / Ollama 国内安装配置 — 远程协助+使用教程</div>
+    <div class="tags">
+      <span>远程协助</span><span>网络方案</span><span>7天支持</span>
+    </div>
+    <div class="price">150<span style="font-size:15px">元起</span> <small>/次</small></div>
+    <a class="btn-cta" href="weixin://" onclick="copyWechat();return false;">📱 微信咨询下单</a>
+  </div>
+
+  <!-- 为什么选我 -->
+  <div class="why">
+    <h3>✨ 为什么选择我的服务</h3>
+    <div class="why-grid">
+      <div class="why-item">
+        <div class="icon">⚡</div>
+        <div class="title">AI加持高效</div>
+        <div class="sub">比传统方式快5-10倍</div>
+      </div>
+      <div class="why-item">
+        <div class="icon">🎯</div>
+        <div class="title">人工精修把关</div>
+        <div class="sub">AI出初稿，人工细打磨</div>
+      </div>
+      <div class="why-item">
+        <div class="icon">💰</div>
+        <div class="title">价格实惠</div>
+        <div class="sub">20元起，不满意退全款</div>
+      </div>
+      <div class="why-item">
+        <div class="icon">🕐</div>
+        <div class="title">急速交付</div>
+        <div class="sub">急单30分钟，常规2小时</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>💬 微信扫码/搜索添加好友即可下单</p>
+  <p style="font-size:12px;margin-top:4px;">支持微信/支付宝付款 | 不满意全额退款</p>
+</div>
+
+<div id="toast" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1e1b4b;color:#fff;padding:12px 24px;border-radius:8px;font-size:15px;display:none;z-index:999;white-space:nowrap;"></div>
+
+<script>
+  // 点击按钮时复制微信号并提示
+  function copyWechat() {
+    // 微信号占位 — 用户需要替换成自己的微信号
+    const wechatId = '替换为你的微信号';
+    if (wechatId === '替换为你的微信号') {
+      showToast('请先设置你的微信号');
+      return;
+    }
+    navigator.clipboard.writeText(wechatId).then(() => {
+      showToast('✅ 微信号已复制，打开微信添加好友');
+    }).catch(() => {
+      showToast('微信号：' + wechatId);
+    });
+  }
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 2000);
+  }
+</script>
+
+</body>
+</html>
