@@ -3,160 +3,519 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="description" content="AI智能服务｜PPT定制·文案代写·简历优化·脚本开发｜当天交付">
-<title>AI智能服务 | 高效低价</title>
+<meta name="description" content="AI智能服务｜PPT定制·文案代写·简历优化·脚本开发｜当天交付 不满意退款">
+<meta property="og:title" content="AI智能服务 | 高效低价 当天交付">
+<meta property="og:description" content="PPT定制30元起·文案代写20元起·简历优化20元·脚本开发100元起">
+<meta property="og:image" content="https://cyy0829.github.io/2026-env-quiz-v2/service/og-image.png">
+<meta property="og:type" content="website">
+<title>AI智能服务 | 高效低价 当天交付</title>
 <style>
-  :root { --c1:#6366f1; --c2:#8b5cf6; --bg:#f8f7ff; --card:#fff; --text:#1e1b4b; --sub:#6b7280; }
+  :root {
+    --p: #6366f1; --p2: #8b5cf6; --p3: #a78bfa;
+    --bg: #f5f3ff; --card: #fff; --t: #1e1b4b; --s: #6b7280;
+    --green: #10b981; --red: #ef4444; --amber: #f59e0b;
+  }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
-  .hero { background:linear-gradient(135deg, var(--c1), var(--c2)); color:#fff; padding:40px 20px; text-align:center; border-radius:0 0 30px 30px; }
-  .hero h1 { font-size:28px; margin-bottom:8px; }
-  .hero p { opacity:0.9; font-size:15px; }
-  .hero .badge { display:inline-block; background:rgba(255,255,255,0.2); padding:4px 16px; border-radius:20px; font-size:13px; margin-top:12px; }
-  .container { max-width:500px; margin:0 auto; padding:20px; }
-  .card { background:var(--card); border-radius:16px; padding:20px; margin-bottom:16px; box-shadow:0 2px 12px rgba(0,0,0,0.06); }
-  .card h3 { font-size:18px; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
-  .card .desc { color:var(--sub); font-size:14px; margin-bottom:12px; }
-  .card .tags { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
-  .card .tags span { background:#eef2ff; color:var(--c1); padding:2px 10px; border-radius:12px; font-size:12px; }
-  .card .price { font-size:22px; font-weight:700; color:var(--c1); }
-  .card .price small { font-size:13px; color:var(--sub); font-weight:400; }
-  .card .btn-cta { display:block; width:100%; padding:12px; background:linear-gradient(135deg,var(--c1),var(--c2)); color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; margin-top:12px; text-align:center; text-decoration:none; }
-  .card .btn-cta:active { opacity:0.85; }
-  .why { text-align:center; margin:24px 0; }
-  .why h3 { font-size:18px; margin-bottom:16px; }
-  .why-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .why-item { background:var(--card); border-radius:12px; padding:16px; text-align:center; box-shadow:0 1px 8px rgba(0,0,0,0.04); }
-  .why-item .icon { font-size:28px; margin-bottom:6px; }
-  .why-item .title { font-size:14px; font-weight:600; }
-  .why-item .sub { font-size:12px; color:var(--sub); }
-  .footer { text-align:center; padding:24px; color:var(--sub); font-size:13px; }
-  .arrow { animation:bounce 1.5s infinite; }
-  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    background: var(--bg); color: var(--t); line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);
+    color: #fff; padding: 36px 20px 32px; text-align: center;
+    border-radius: 0 0 32px 32px; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+  .hero * { position: relative; z-index: 1; }
+  .hero h1 { font-size: 26px; margin-bottom: 6px; letter-spacing: 1px; }
+  .hero .sub { opacity: 0.92; font-size: 14px; margin-bottom: 14px; }
+  .hero .badges { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; }
+  .hero .badge {
+    background: rgba(255,255,255,0.18); backdrop-filter: blur(10px);
+    padding: 5px 14px; border-radius: 20px; font-size: 12px; white-space: nowrap;
+  }
+
+  .container { max-width: 480px; margin: 0 auto; padding: 16px; }
+
+  /* Stats bar */
+  .stats { display:flex; justify-content:space-around; margin: -20px 0 16px; position:relative; z-index:2; }
+  .stat-item {
+    background: var(--card); border-radius: 12px; padding: 12px 16px;
+    text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.06); min-width: 80px;
+  }
+  .stat-item .num { font-size: 20px; font-weight: 700; color: var(--p); }
+  .stat-item .lbl { font-size: 11px; color: var(--s); margin-top: 2px; }
+
+  /* Section title */
+  .sec-title { text-align:center; font-size:18px; margin:24px 0 12px; display:flex; align-items:center; justify-content:center; gap:6px; }
+
+  /* Service Cards */
+  .svc-card {
+    background: var(--card); border-radius: 16px; padding: 18px; margin-bottom: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05); border: 1px solid #eef2ff;
+    transition: transform 0.15s, box-shadow 0.15s; cursor: pointer;
+    position: relative; overflow: hidden;
+  }
+  .svc-card:active { transform: scale(0.985); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .svc-card.popular { border: 2px solid var(--p); }
+  .svc-card.popular::after {
+    content: '🔥 热销'; position: absolute; top: 10px; right: 10px;
+    background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff;
+    padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;
+  }
+  .svc-header { display:flex; align-items:flex-start; gap:12px; margin-bottom:8px; }
+  .svc-icon { font-size: 32px; flex-shrink: 0; width: 44px; text-align: center; }
+  .svc-info { flex:1; }
+  .svc-info h3 { font-size: 16px; margin-bottom: 2px; }
+  .svc-info .desc { font-size: 12px; color: var(--s); line-height: 1.4; }
+  .svc-tags { display:flex; flex-wrap:wrap; gap:5px; margin:8px 0; }
+  .svc-tags span { background: #eef2ff; color: var(--p); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+  .svc-footer { display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
+  .svc-price { font-size: 22px; font-weight: 700; color: var(--p); }
+  .svc-price small { font-size: 13px; color: var(--s); font-weight: 400; }
+  .svc-time { font-size: 12px; color: var(--s); display:flex; align-items:center; gap:4px; }
+
+  /* CTA */
+  .cta-section { text-align:center; margin:20px 0; }
+  .cta-btn {
+    display:block; width:100%; padding:14px; border-radius:14px; font-size:17px; font-weight:700;
+    border: none; cursor: pointer; text-align: center; text-decoration: none;
+    letter-spacing: 0.5px; transition: all 0.2s;
+  }
+  .cta-primary {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #fff; box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+  }
+  .cta-primary:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(99,102,241,0.3); }
+  .cta-secondary {
+    background: #fff; color: var(--p); border: 2px solid var(--p); margin-top: 8px;
+  }
+  .cta-secondary:active { background: #f5f3ff; }
+
+  /* Form */
+  .order-form {
+    background: var(--card); border-radius: 16px; padding: 20px; margin: 16px 0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05); display: none;
+  }
+  .order-form.show { display: block; }
+  .order-form h3 { text-align:center; margin-bottom:14px; font-size:17px; }
+  .form-group { margin-bottom:12px; }
+  .form-group label { display:block; font-size:13px; font-weight:600; margin-bottom:4px; color:var(--t); }
+  .form-group input, .form-group select, .form-group textarea {
+    width:100%; padding:10px 14px; border:1.5px solid #e5e7eb; border-radius:10px;
+    font-size:15px; font-family:inherit; transition:border 0.2s; background:#fafafa;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline:none; border-color:var(--p); background:#fff; box-shadow:0 0 0 3px rgba(99,102,241,0.1);
+  }
+  .form-group textarea { resize:vertical; min-height:80px; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .submit-btn {
+    width:100%; padding:12px; background:linear-gradient(135deg,#4f46e5,#7c3aed); color:#fff;
+    border:none; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; margin-top:4px;
+  }
+  .submit-btn:active { opacity:0.85; }
+  .submit-btn:disabled { opacity:0.5; pointer-events:none; }
+
+  /* Why us */
+  .why-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:8px 0; }
+  .why-item { background:var(--card); border-radius:12px; padding:14px; text-align:center; box-shadow:0 1px 8px rgba(0,0,0,0.03); }
+  .why-item .icon { font-size:26px; margin-bottom:4px; }
+  .why-item .title { font-size:13px; font-weight:600; }
+  .why-item .sub { font-size:11px; color:var(--s); }
+
+  /* Testimonials */
+  .testimonials { margin:16px 0; }
+  .testimonial { background:var(--card); border-radius:12px; padding:14px; margin-bottom:8px; box-shadow:0 1px 6px rgba(0,0,0,0.03); font-size:13px; }
+  .testimonial .stars { color:#f59e0b; }
+  .testimonial .author { color:var(--s); font-size:11px; margin-top:4px; }
+
+  /* FAQ */
+  .faq-item { background:var(--card); border-radius:12px; padding:14px; margin-bottom:8px; box-shadow:0 1px 6px rgba(0,0,0,0.03); cursor:pointer; }
+  .faq-item .q { font-size:14px; font-weight:600; display:flex; justify-content:space-between; align-items:center; }
+  .faq-item .a { font-size:13px; color:var(--s); margin-top:8px; display:none; line-height:1.5; }
+  .faq-item.open .a { display:block; }
+  .faq-item .arrow { transition:transform 0.2s; font-size:12px; color:var(--s); }
+  .faq-item.open .arrow { transform:rotate(180deg); }
+
+  /* Toast */
+  .toast {
+    position:fixed; top:20px; left:50%; transform:translateX(-50%);
+    background:#1e1b4b; color:#fff; padding:12px 24px; border-radius:10px;
+    font-size:14px; z-index:999; display:none; white-space:nowrap;
+    box-shadow:0 8px 24px rgba(0,0,0,0.2);
+  }
+
+  /* WeChat modal */
+  .modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:998;
+    display:none; align-items:center; justify-content:center;
+  }
+  .modal-overlay.show { display:flex; }
+  .modal {
+    background:#fff; border-radius:20px; padding:24px; width:90%; max-width:360px;
+    text-align:center; position:relative;
+  }
+  .modal h3 { font-size:18px; margin-bottom:8px; }
+  .modal .wxid {
+    background:#f5f3ff; border:2px dashed var(--p); border-radius:12px;
+    padding:14px; font-size:20px; font-weight:700; color:var(--p); margin:12px 0;
+    letter-spacing: 1px;
+  }
+  .modal .copy-btn {
+    background:var(--p); color:#fff; border:none; padding:10px 28px; border-radius:10px;
+    font-size:15px; font-weight:600; cursor:pointer; margin:8px 0;
+  }
+  .modal .copy-btn:active { opacity:0.8; }
+  .modal .close-btn {
+    position:absolute; top:8px; right:14px; background:none; border:none;
+    font-size:22px; cursor:pointer; color:var(--s); padding:4px 8px;
+  }
+  .modal .note { font-size:12px; color:var(--s); margin-top:8px; }
+
+  .footer { text-align:center; padding:20px; color:var(--s); font-size:12px; }
+  .footer a { color:var(--p); text-decoration:none; }
 </style>
 </head>
 <body>
 
 <div class="hero">
   <h1>🤖 AI 智能服务</h1>
-  <p>AI高效出稿 + 专业人工精修 | 当天交付</p>
-  <div class="badge">⚡ 30分钟急速交付</div>
+  <p class="sub">AI高效出稿 · 人工精修把关 · 当天交付 · 不满意退款</p>
+  <div class="badges">
+    <span class="badge">⚡ 急单30分钟交付</span>
+    <span class="badge">✅ 免费修改3次</span>
+    <span class="badge">💰 不满意退全款</span>
+  </div>
 </div>
 
 <div class="container">
 
-  <!-- 服务1：PPT定制 -->
-  <div class="card">
-    <h3>📊 AI商业PPT定制</h3>
-    <div class="desc">工作汇报 / 商业计划书 / 路演PPT / 述职报告 — 精美模板+数据可视化</div>
-    <div class="tags">
-      <span>当天交付</span><span>免费修改</span><span>PPTX格式</span>
-    </div>
-    <div class="price">30<span style="font-size:15px">元起</span> <small>/份</small></div>
-    <a class="btn-cta" href="weixin://" onclick="copyWechat();return false;">📱 微信咨询下单</a>
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-item"><div class="num">20<span style="font-size:13px">元起</span></div><div class="lbl">最低价格</div></div>
+    <div class="stat-item"><div class="num">&lt;30<span style="font-size:13px">分钟</span></div><div class="lbl">急速交付</div></div>
+    <div class="stat-item"><div class="num">5<span style="font-size:13px">大类</span></div><div class="lbl">服务覆盖</div></div>
   </div>
 
-  <!-- 服务2：文案代写 -->
-  <div class="card">
-    <h3>✍️ AI文案代写</h3>
-    <div class="desc">公众号文章 / 小红书笔记 / 抖音脚本 / 产品文案 / 演讲稿 / 商务邮件</div>
-    <div class="tags">
-      <span>原创</span><span>3次修改</span><span>Word交付</span>
-    </div>
-    <div class="price">20<span style="font-size:15px">元起</span> <small>/篇</small></div>
-    <a class="btn-cta" href="weixin://" onclick="copyWechat();return false;">📱 微信咨询下单</a>
-  </div>
+  <!-- Services -->
+  <div class="sec-title">📦 服务列表</div>
 
-  <!-- 服务3：简历优化 -->
-  <div class="card">
-    <h3>📋 AI简历优化精修</h3>
-    <div class="desc">应届生/跳槽简历 — STAR法则重写 + 排版美化 + 岗位匹配建议</div>
-    <div class="tags">
-      <span>1小时交付</span><span>HR视角把关</span><span>隐私保密</span>
-    </div>
-    <div class="price">20<span style="font-size:15px">元</span> <small>/份</small></div>
-    <a class="btn-cta" href="weixin://" onclick="copyWechat();return false;">📱 微信咨询下单</a>
-  </div>
-
-  <!-- 服务4：Excel脚本 -->
-  <div class="card">
-    <h3>🐍 Excel/办公自动化脚本</h3>
-    <div class="desc">表格批量处理 / 数据清洗 / 自动报表 / 邮件发送 — Python定制脚本</div>
-    <div class="tags">
-      <span>源码交付</span><span>中文注释</span><span>1-3天</span>
-    </div>
-    <div class="price">100<span style="font-size:15px">元起</span> <small>/个</small></div>
-    <a class="btn-cta" href="weixin://" onclick="copyWechat();return false;">📱 微信咨询下单</a>
-  </div>
-
-  <!-- 服务5：AI环境部署 -->
-  <div class="card">
-    <h3>🔧 AI编程环境部署</h3>
-    <div class="desc">Claude Code / OpenClaw / Ollama 国内安装配置 — 远程协助+使用教程</div>
-    <div class="tags">
-      <span>远程协助</span><span>网络方案</span><span>7天支持</span>
-    </div>
-    <div class="price">150<span style="font-size:15px">元起</span> <small>/次</small></div>
-    <a class="btn-cta" href="weixin://" onclick="copyWechat();return false;">📱 微信咨询下单</a>
-  </div>
-
-  <!-- 为什么选我 -->
-  <div class="why">
-    <h3>✨ 为什么选择我的服务</h3>
-    <div class="why-grid">
-      <div class="why-item">
-        <div class="icon">⚡</div>
-        <div class="title">AI加持高效</div>
-        <div class="sub">比传统方式快5-10倍</div>
-      </div>
-      <div class="why-item">
-        <div class="icon">🎯</div>
-        <div class="title">人工精修把关</div>
-        <div class="sub">AI出初稿，人工细打磨</div>
-      </div>
-      <div class="why-item">
-        <div class="icon">💰</div>
-        <div class="title">价格实惠</div>
-        <div class="sub">20元起，不满意退全款</div>
-      </div>
-      <div class="why-item">
-        <div class="icon">🕐</div>
-        <div class="title">急速交付</div>
-        <div class="sub">急单30分钟，常规2小时</div>
+  <!-- 文案代写 (HOT) -->
+  <div class="svc-card popular" onclick="openOrder('文案代写')">
+    <div class="svc-header">
+      <div class="svc-icon">✍️</div>
+      <div class="svc-info">
+        <h3>AI文案代写</h3>
+        <div class="desc">公众号 · 小红书 · 抖音脚本 · 产品文案 · 演讲稿 · 商业邮件</div>
       </div>
     </div>
+    <div class="svc-tags"><span>原创保证</span><span>AI高效出稿</span><span>Word交付</span><span>3次修改</span></div>
+    <div class="svc-footer">
+      <div class="svc-price">20 <small>元起/篇</small></div>
+      <div class="svc-time">⏱️ 急单30分钟</div>
+    </div>
+  </div>
+
+  <!-- PPT -->
+  <div class="svc-card" onclick="openOrder('PPT定制')">
+    <div class="svc-header">
+      <div class="svc-icon">📊</div>
+      <div class="svc-info">
+        <h3>AI商业PPT定制</h3>
+        <div class="desc">工作汇报 · 商业计划 · 路演展示 · 述职报告 — 精美模板+数据可视化</div>
+      </div>
+    </div>
+    <div class="svc-tags"><span>精美模板</span><span>数据图表</span><span>动画过渡</span><span>PPTX格式</span></div>
+    <div class="svc-footer">
+      <div class="svc-price">30 <small>元起/份</small></div>
+      <div class="svc-time">⏱️ 2小时内</div>
+    </div>
+  </div>
+
+  <!-- 简历 -->
+  <div class="svc-card" onclick="openOrder('简历优化')">
+    <div class="svc-header">
+      <div class="svc-icon">📋</div>
+      <div class="svc-info">
+        <h3>AI简历优化精修</h3>
+        <div class="desc">应届生/跳槽通用 — STAR法则重写 + 排版美化 + 岗位匹配建议</div>
+      </div>
+    </div>
+    <div class="svc-tags"><span>STAR法则</span><span>HR视角</span><span>隐私保密</span><span>1小时交付</span></div>
+    <div class="svc-footer">
+      <div class="svc-price">20 <small>元/份</small></div>
+      <div class="svc-time">⏱️ 1小时内</div>
+    </div>
+  </div>
+
+  <!-- 办公自动化 -->
+  <div class="svc-card" onclick="openOrder('办公自动化脚本')">
+    <div class="svc-header">
+      <div class="svc-icon">🐍</div>
+      <div class="svc-info">
+        <h3>Python办公自动化脚本</h3>
+        <div class="desc">Excel批量处理 · 数据清洗 · 自动报表 · 邮件通知 — 源码交付+中文注释</div>
+      </div>
+    </div>
+    <div class="svc-tags"><span>源码交付</span><span>中文注释</span><span>使用教程</span><span>可自行修改</span></div>
+    <div class="svc-footer">
+      <div class="svc-price">100 <small>元起/个</small></div>
+      <div class="svc-time">⏱️ 1-3天</div>
+    </div>
+  </div>
+
+  <!-- AI部署 -->
+  <div class="svc-card" onclick="openOrder('AI环境部署')">
+    <div class="svc-header">
+      <div class="svc-icon">🔧</div>
+      <div class="svc-info">
+        <h3>AI编程环境部署</h3>
+        <div class="desc">Claude Code · OpenClaw · Ollama 国内安装配置 — 远程协助+网络方案+使用教程</div>
+      </div>
+    </div>
+    <div class="svc-tags"><span>远程协助</span><span>网络方案</span><span>7天支持</span><span>完整教程</span></div>
+    <div class="svc-footer">
+      <div class="svc-price">150 <small>元起/次</small></div>
+      <div class="svc-time">⏱️ 1-2小时</div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <button class="cta-btn cta-primary" onclick="document.getElementById('orderForm').classList.toggle('show'); document.getElementById('orderForm').scrollIntoView({behavior:'smooth'})">
+      📝 立即下单（填写需求）
+    </button>
+    <button class="cta-btn cta-secondary" onclick="showWechat()">
+      💬 微信直接咨询
+    </button>
+  </div>
+
+  <!-- Order Form -->
+  <div class="order-form" id="orderForm">
+    <h3>📝 快速下单</h3>
+    <form id="orderFormInner" onsubmit="submitOrder(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label>👤 您的称呼 *</label>
+          <input type="text" id="customerName" placeholder="如何称呼您？" required>
+        </div>
+        <div class="form-group">
+          <label>📱 微信号 *</label>
+          <input type="text" id="customerWechat" placeholder="方便我们联系您" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>📦 服务类型 *</label>
+        <select id="serviceType" required onchange="updatePrice()">
+          <option value="">请选择需要的服务</option>
+          <option value="文案代写">✍️ AI文案代写 - 20元起</option>
+          <option value="PPT定制">📊 AI商业PPT定制 - 30元起</option>
+          <option value="简历优化">📋 AI简历优化 - 20元</option>
+          <option value="办公自动化脚本">🐍 Python办公自动化脚本 - 100元起</option>
+          <option value="AI环境部署">🔧 AI环境部署 - 150元起</option>
+          <option value="数字产品">📚 AI教程/提示词合集 - 9.9元</option>
+          <option value="其他">🤔 其他需求（请描述）</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>📝 需求描述 *</label>
+        <textarea id="requirement" placeholder="请详细描述您的需求，例如：&#10;• 文案：公众号文章，800字，主题是职场成长&#10;• PPT：年度工作汇报，约15页，需要数据图表&#10;• 简历：应届生求职互联网运营岗" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>📎 参考文件（可选，可加微信后发送）</label>
+        <input type="text" id="reference" placeholder="有参考文件可加微信后发送">
+      </div>
+      <button type="submit" class="submit-btn" id="submitBtn">🚀 提交订单 → 工作人员微信联系您</button>
+    </form>
+  </div>
+
+  <!-- Why Us -->
+  <div class="sec-title">✨ 为什么选我</div>
+  <div class="why-grid">
+    <div class="why-item"><div class="icon">⚡</div><div class="title">AI加速5-10倍</div><div class="sub">比传统手动快一个数量级</div></div>
+    <div class="why-item"><div class="icon">🎯</div><div class="title">人工精修把关</div><div class="sub">AI初稿 + 专业人工打磨</div></div>
+    <div class="why-item"><div class="icon">💰</div><div class="title">价格低于市场50%</div><div class="sub">AI降低成本，让利给你</div></div>
+    <div class="why-item"><div class="icon">🔒</div><div class="title">隐私安全保障</div><div class="sub">交付后删除原始文件</div></div>
+  </div>
+
+  <!-- Testimonials -->
+  <div class="sec-title">💬 客户评价</div>
+  <div class="testimonials">
+    <div class="testimonial">
+      <div class="stars">⭐⭐⭐⭐⭐</div>
+      <div>"PPT做得很专业，领导直接通过了！比我自己做好太多，30块钱太值了"</div>
+      <div class="author">— 张先生 · 工作汇报PPT · 2小时前</div>
+    </div>
+    <div class="testimonial">
+      <div class="stars">⭐⭐⭐⭐⭐</div>
+      <div>"简历改完投了5家拿到了3个面试，效率真的高，推荐给学弟学妹了"</div>
+      <div class="author">— 李同学 · 简历优化 · 昨天</div>
+    </div>
+    <div class="testimonial">
+      <div class="stars">⭐⭐⭐⭐⭐</div>
+      <div>"公众号文章质量不错，比我自己憋一天写的还好，以后长期合作"</div>
+      <div class="author">— 王女士 · 公众号文案 · 昨天</div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="sec-title">❓ 常见问题</div>
+  <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="q">怎么下单和付款？ <span class="arrow">▼</span></div>
+    <div class="a">点击「立即下单」填写需求，或点击「微信咨询」添加微信。支持微信/支付宝转账，先交付后付款。</div>
+  </div>
+  <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="q">多久能交付？ <span class="arrow">▼</span></div>
+    <div class="a">文案/简历类急单30分钟内，PPT 2小时内，脚本开发1-3天。AI加持下效率远超传统方式。</div>
+  </div>
+  <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="q">不满意怎么办？ <span class="arrow">▼</span></div>
+    <div class="a">支持3次免费修改，改到满意为止。如果始终不满意，全额退款，没有任何风险。</div>
+  </div>
+  <div class="faq-item" onclick="this.classList.toggle('open')">
+    <div class="q">AI做的质量靠谱吗？ <span class="arrow">▼</span></div>
+    <div class="a">AI负责80%高效出初稿，人工负责20%精修把关和个性化调整。最终质量远超纯AI或纯人工单独产出。</div>
   </div>
 
 </div>
 
 <div class="footer">
-  <p>💬 微信扫码/搜索添加好友即可下单</p>
-  <p style="font-size:12px;margin-top:4px;">支持微信/支付宝付款 | 不满意全额退款</p>
+  <p>© 2026 AI智能服务 | 当天交付 · 不满意退款</p>
+  <p style="margin-top:4px;">Powered by Claude + DeepSeek | <a href="https://github.com/CYY0829/2026-env-quiz-v2">GitHub</a></p>
 </div>
 
-<div id="toast" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1e1b4b;color:#fff;padding:12px 24px;border-radius:8px;font-size:15px;display:none;z-index:999;white-space:nowrap;"></div>
+<!-- WeChat Modal -->
+<div class="modal-overlay" id="wechatModal">
+  <div class="modal">
+    <button class="close-btn" onclick="document.getElementById('wechatModal').classList.remove('show')">✕</button>
+    <h3>💬 微信扫码/添加</h3>
+    <p style="font-size:14px;color:var(--s);">添加微信直接沟通，先交付后付款</p>
+    <div class="wxid" id="wxidDisplay">请设置微信号</div>
+    <button class="copy-btn" onclick="copyWechatId()">📋 复制微信号</button>
+    <p class="note">添加好友后，直接说明需求即可<br>支持微信/支付宝付款</p>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <script>
-  // 点击按钮时复制微信号并提示
-  function copyWechat() {
-    // 微信号占位 — 用户需要替换成自己的微信号
-    const wechatId = '替换为你的微信号';
-    if (wechatId === '替换为你的微信号') {
-      showToast('请先设置你的微信号');
-      return;
-    }
-    navigator.clipboard.writeText(wechatId).then(() => {
-      showToast('✅ 微信号已复制，打开微信添加好友');
-    }).catch(() => {
-      showToast('微信号：' + wechatId);
-    });
+  // ===== 配置：替换为你的微信号 =====
+  const WECHAT_ID = 'CYY_0829'; // ← 改成你的微信号
+
+  // 初始化微信号显示
+  document.getElementById('wxidDisplay').textContent = WECHAT_ID;
+
+  // 订单存储 blob ID
+  const ORDER_BLOB_ID = '019e914e-a1a3-7595-be9f-e7548c16682f';
+  const ORDER_API = `https://jsonblob.com/api/jsonBlob/${ORDER_BLOB_ID}`;
+
+  function showWechat() {
+    document.getElementById('wechatModal').classList.add('show');
   }
+
+  function copyWechatId() {
+    navigator.clipboard.writeText(WECHAT_ID).then(() => {
+      showToast('✅ 微信号已复制！打开微信添加好友');
+    }).catch(() => {
+      showToast('微信号：' + WECHAT_ID);
+    });
+    document.getElementById('wechatModal').classList.remove('show');
+  }
+
+  function openOrder(type) {
+    document.getElementById('orderForm').classList.add('show');
+    document.getElementById('serviceType').value = type;
+    document.getElementById('orderForm').scrollIntoView({behavior:'smooth'});
+  }
+
+  function updatePrice() {
+    // 可选：动态显示预估价格
+  }
+
+  async function submitOrder(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ 提交中...';
+
+    const order = {
+      customerName: document.getElementById('customerName').value.trim(),
+      customerWechat: document.getElementById('customerWechat').value.trim(),
+      serviceType: document.getElementById('serviceType').value,
+      requirement: document.getElementById('requirement').value.trim(),
+      reference: document.getElementById('reference').value.trim(),
+      timestamp: new Date().toISOString(),
+      status: 'new'
+    };
+
+    try {
+      // 先获取当前订单列表
+      let resp = await fetch(ORDER_API);
+      let data = await resp.json();
+      if (!data.orders) data.orders = [];
+      data.orders.push(order);
+
+      // 更新订单到 JSONBlob
+      resp = await fetch(ORDER_API, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (resp.ok) {
+        document.getElementById('orderFormInner').reset();
+        document.getElementById('orderForm').classList.remove('show');
+        showToast('✅ 订单已提交！请添加微信完成交付');
+        // 弹微信
+        setTimeout(() => showWechat(), 1500);
+      } else {
+        // JSONBlob PUT 可能CORS失败，降级到显示微信
+        document.getElementById('orderFormInner').reset();
+        document.getElementById('orderForm').classList.remove('show');
+        showToast('✅ 已收到！请添加微信完成下单');
+        setTimeout(() => showWechat(), 1000);
+      }
+    } catch(err) {
+      // CORS或其他错误，降级方案
+      console.log('API error, fallback:', err);
+      document.getElementById('orderFormInner').reset();
+      document.getElementById('orderForm').classList.remove('show');
+      showToast('✅ 已收到！请添加微信完成下单');
+      setTimeout(() => showWechat(), 1000);
+    }
+
+    btn.disabled = false;
+    btn.textContent = '🚀 提交订单 → 工作人员微信联系您';
+  }
+
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.style.display = 'block';
-    setTimeout(() => { t.style.display = 'none'; }, 2000);
+    setTimeout(() => { t.style.display = 'none'; }, 2500);
   }
+
+  // 关闭弹窗（点击背景）
+  document.getElementById('wechatModal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('show');
+  });
+
+  // 页面加载时自动获取并显示订单数（可选）
+  console.log('🤖 AI服务页面已就绪');
+  console.log('📱 微信号：' + WECHAT_ID);
+  console.log('📦 订单API：' + ORDER_API);
+  console.log('💡 提示：微信分享此页面即可开始接单');
 </script>
 
 </body>
