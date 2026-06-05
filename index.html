@@ -2607,9 +2607,10 @@ async function renderRanking() {
   }
 
   html += `
-    <div style="text-align:center;margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-      <button class="btn btn-outline" onclick="loadTestData()" style="font-size:0.85em;padding:8px 16px;">🧪 加载6人测试数据</button>
-      <button class="btn btn-outline" onclick="clearRankings()" style="font-size:0.85em;padding:8px 16px;">🗑️ 清空排行榜</button>
+    <div id="adminPanel" style="display:none;text-align:center;margin-top:16px;padding:12px;border:1px dashed #ccc;border-radius:8px;">
+      <p style="font-size:0.85em;color:#999;margin-bottom:8px;">🔧 管理面板</p>
+      <button class="btn btn-outline" onclick="loadTestData()" style="font-size:0.8em;padding:6px 12px;">🧪 加载测试数据</button>
+      <button class="btn btn-outline" onclick="clearRankings()" style="font-size:0.8em;padding:6px 12px;">🗑️ 清空排行榜</button>
     </div>
   `;
 
@@ -2662,6 +2663,18 @@ function renderLocalRanking(localData) {
   container.innerHTML = html;
 }
 
+// 管理面板显示（仅控制台调用）
+function showAdmin() {
+  const pwd = prompt('请输入管理员密码：');
+  if (pwd === ADMIN_PASSWORD) {
+    document.getElementById('adminPanel').style.display = 'block';
+    document.getElementById('adminPanel').scrollIntoView({ behavior: 'smooth' });
+    console.log('✅ 管理面板已显示');
+  } else {
+    alert('❌ 密码错误');
+  }
+}
+
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
@@ -2695,6 +2708,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 console.log('🌿 2026年六五环境日答题竞赛系统已就绪');
+console.log('💡 管理面板：在控制台输入 showAdmin() 显示管理按钮');
 console.log(`📚 题库总数: ${ALL_QUESTIONS.length} 题`);
 console.log('📋 来源: 生态环境法典 | 自然保护区条例 | 固废污染控制技术规范 | 固体废物综合治理行动计划');
 </script>
