@@ -2087,10 +2087,15 @@ async function autoSyncLocalToCloud() {
   await fetchRankings();
   let synced = 0;
   for (const record of local) {
-    const exists = sharedRankings.some(r =>
-      r.name === record.name && r.score === record.score && r.time === record.time
-    );
-    if (!exists) {
+    // 同一个人只保留最佳成绩（正确率优先，用时越短越好）
+    const existingIdx = sharedRankings.findIndex(r => r.name === record.name);
+    if (existingIdx >= 0) {
+      const existing = sharedRankings[existingIdx];
+      if (record.score > existing.score || (record.score === existing.score && record.time < existing.time)) {
+        sharedRankings[existingIdx] = record;
+        synced++;
+      }
+    } else {
       sharedRankings.push(record);
       synced++;
     }
@@ -2136,18 +2141,26 @@ async function saveRanking(record) {
   // 重试最多3次
   for (let attempt = 0; attempt < 3; attempt++) {
     await fetchRankings();
-    // 去重
-    const dup = sharedRankings.find(r =>
-      r.name === record.name && r.score === record.score && r.time === record.time
-    );
-    if (!dup) {
+    // 去重：同一个人只保留最佳成绩（正确率优先，用时越短越好）
+    const existingIdx = sharedRankings.findIndex(r => r.name === record.name);
+    if (existingIdx >= 0) {
+      const existing = sharedRankings[existingIdx];
+      // 新成绩更好才替换
+      if (record.score > existing.score || (record.score === existing.score && record.time < existing.time)) {
+        sharedRankings[existingIdx] = record;
+      } else {
+        // 旧成绩更好，无需更新，但不算失败
+        success = true;
+        break;
+      }
+    } else {
       sharedRankings.push(record);
-      sharedRankings.sort((a, b) => {
-        if (b.score !== a.score) return b.score - a.score;
-        return a.time - b.time;
-      });
-      sharedRankings = sharedRankings.slice(0, 200);
     }
+    sharedRankings.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.time - b.time;
+    });
+    sharedRankings = sharedRankings.slice(0, 200);
     // 通过 GitHub API 写入
     try {
       const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(sharedRankings, null, 2))));
@@ -2184,9 +2197,16 @@ async function saveRanking(record) {
     }
     if (attempt < 2) await new Promise(r => setTimeout(r, 800));
   }
-  // 保存到 localStorage 作为备份
+  // 保存到 localStorage 作为备份（同一个人只保留最佳成绩）
   let local = JSON.parse(localStorage.getItem('envQuizRankings') || '[]');
-  if (!local.find(r => r.name === record.name && r.score === record.score)) {
+  const localIdx = local.findIndex(r => r.name === record.name);
+  if (localIdx >= 0) {
+    const existing = local[localIdx];
+    if (record.score > existing.score || (record.score === existing.score && record.time < existing.time)) {
+      local[localIdx] = record;
+      localStorage.setItem('envQuizRankings', JSON.stringify(local));
+    }
+  } else {
     local.push(record);
     localStorage.setItem('envQuizRankings', JSON.stringify(local));
   }
