@@ -2040,44 +2040,117 @@ Q('固体废物综合治理行动计划','"固废十条"对地方政府用地保
 console.log(`题库加载完毕，共 ${ALL_QUESTIONS.length} 道题目`);
 
 // ==================== 共享排行榜 API ====================
-const RANKING_API = 'https://jsonblob.com/api/jsonBlob/019e882f-cc5e-7ef3-ae16-bd3e4f22b2b4';
+const RANKING_API = 'https://jsonblob.com/api/jsonBlob/019e95d3-0048-7bdb-92b5-72c270e52207';
 let sharedRankings = [];
+
+const ADMIN_PASSWORD = "quiz2026admin";
 
 async function fetchRankings() {
   try {
     const resp = await fetch(RANKING_API);
-    if (resp.ok) sharedRankings = await resp.json();
-    else sharedRankings = [];
+    if (resp.ok) {
+      sharedRankings = await resp.json();
+      if (!Array.isArray(sharedRankings)) sharedRankings = [];
+    } else {
+      console.warn('排行榜加载失败，状态码:', resp.status);
+      sharedRankings = [];
+    }
   } catch(e) {
+    console.warn('排行榜网络请求失败:', e.message);
     sharedRankings = [];
   }
   return sharedRankings;
 }
 
-async function saveRanking(record) {
-  // 先获取最新排名
+
+// ==================== 自动同步本地成绩到云端 ====================
+async function autoSyncLocalToCloud() {
+  const local = JSON.parse(localStorage.getItem('envQuizRankings') || '[]');
+  if (local.length === 0) return;
+
+  console.log('🔍 检测到本地存储了 ' + local.length + ' 条成绩记录，检查是否需要同步到云端...');
+
   await fetchRankings();
-  sharedRankings.push(record);
-  // 按得分降序 → 用时升序
-  sharedRankings.sort((a, b) => {
-    if (b.score !== a.score) return b.score - a.score;
-    return a.time - b.time;
-  });
-  // 保留前100名
-  sharedRankings = sharedRankings.slice(0, 100);
-  try {
-    await fetch(RANKING_API, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(sharedRankings)
+
+  let synced = 0;
+  for (const record of local) {
+    // 检查云端是否已有此记录
+    const exists = sharedRankings.some(r =>
+      r.name === record.name && r.score === record.score && r.time === record.time
+    );
+    if (!exists) {
+      sharedRankings.push(record);
+      synced++;
+    }
+  }
+
+  if (synced > 0) {
+    console.log('📤 发现 ' + synced + ' 条新记录，正在同步到云端...');
+    // 排序并保存
+    sharedRankings.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.time - b.time;
     });
-  } catch(e) {
-    console.error('排名保存失败:', e);
-    // 降级到 localStorage
-    let local = JSON.parse(localStorage.getItem('envQuizRankings') || '[]');
+    sharedRankings = sharedRankings.slice(0, 200);
+
+    try {
+      const resp = await fetch(RANKING_API, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sharedRankings)
+      });
+      if (resp.ok) {
+        console.log('✅ 成功同步 ' + synced + ' 条记录到云端排行榜！');
+      } else {
+        console.warn('⚠️ 同步失败，状态码:', resp.status);
+      }
+    } catch(e) {
+      console.warn('⚠️ 同步网络失败:', e.message);
+    }
+  } else {
+    console.log('✅ 本地记录已全部在云端，无需同步');
+  }
+}
+
+async function saveRanking(record) {
+  let success = false;
+  // 重试最多3次，处理并发冲突
+  for (let attempt = 0; attempt < 3; attempt++) {
+    await fetchRankings();
+    // 去重：如果已有完全相同的记录则跳过
+    const dup = sharedRankings.find(r =>
+      r.name === record.name && r.score === record.score && r.time === record.time
+    );
+    if (!dup) {
+      sharedRankings.push(record);
+      // 按得分降序 → 用时升序
+      sharedRankings.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return a.time - b.time;
+      });
+      // 保留前200名
+      sharedRankings = sharedRankings.slice(0, 200);
+    }
+    try {
+      const resp = await fetch(RANKING_API, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sharedRankings)
+      });
+      if (resp.ok) { success = true; break; }
+    } catch(e) {
+      console.error('排名保存失败(尝试' + (attempt+1) + '):', e);
+    }
+    // 短暂延迟后重试
+    if (attempt < 2) await new Promise(r => setTimeout(r, 500));
+  }
+  // 无论云端是否成功，都保存到本地作为备份
+  let local = JSON.parse(localStorage.getItem('envQuizRankings') || '[]');
+  if (!local.find(r => r.name === record.name && r.score === record.score)) {
     local.push(record);
     localStorage.setItem('envQuizRankings', JSON.stringify(local));
   }
+  return success;
 }
 
 async function clearSharedRankings() {
@@ -2475,7 +2548,17 @@ async function renderRanking() {
   const container = document.getElementById('rankingContent');
 
   if (rankings.length === 0) {
-    container.innerHTML = `<div class="empty-ranking"><span class="icon">🏆</span>暂无成绩记录<br>快来挑战吧！</div>`;
+    // 尝试显示本地存储的成绩
+    const local = JSON.parse(localStorage.getItem('envQuizRankings') || '[]');
+    if (local.length > 0) {
+      local.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return a.time - b.time;
+      });
+      renderLocalRanking(local);
+    } else {
+      container.innerHTML = `<div class="empty-ranking"><span class="icon">🏆</span>暂无成绩记录<br>快来挑战吧！</div>`;
+    }
     return;
   }
 
@@ -2534,12 +2617,24 @@ async function renderRanking() {
 }
 
 function clearRankings() {
+  const pwd = prompt('⚠️ 清空排行榜需要管理员密码，请输入密码：');
+  if (!pwd) return;
+  if (pwd !== ADMIN_PASSWORD) {
+    alert('❌ 密码错误，操作已取消。');
+    return;
+  }
   if (confirm('确定要清空排行榜吗？此操作不可恢复，将影响所有用户。')) {
     clearSharedRankings().then(() => renderRanking());
   }
 }
 
 function loadTestData() {
+  const pwd = prompt('⚠️ 加载测试数据需要管理员密码，请输入密码：');
+  if (!pwd) return;
+  if (pwd !== ADMIN_PASSWORD) {
+    alert('❌ 密码错误，操作已取消。');
+    return;
+  }
   if (sharedRankings.length > 0) {
     if (!confirm('排行榜已有数据，确定要覆盖为测试数据吗？')) return;
   }
@@ -2548,6 +2643,23 @@ function loadTestData() {
     document.getElementById('rankingCard').scrollIntoView({ behavior: 'smooth' });
     alert('✅ 6人测试数据已加载！\n\n🏆 排行榜已更新（云端共享），请查看下方排名。');
   });
+}
+
+function renderLocalRanking(localData) {
+  const container = document.getElementById('rankingContent');
+  let html = '<p style="text-align:center;color:#e17055;margin-bottom:12px;">⚠️ 云端排行榜暂时无法访问，显示本地存储的成绩（可能不完整）</p>';
+  html += '<table class="ranking-table"><thead><tr><th>排名</th><th>姓名</th><th>得分</th><th>正确率</th><th>用时</th><th>日期</th></tr></thead><tbody>';
+  localData.forEach((r, i) => {
+    const rank = i + 1;
+    let rankClass = 'rank-other', rankIcon = rank;
+    if (rank === 1) { rankClass = 'rank-1'; rankIcon = '🥇'; }
+    else if (rank === 2) { rankClass = 'rank-2'; rankIcon = '🥈'; }
+    else if (rank === 3) { rankClass = 'rank-3'; rankIcon = '🥉'; }
+    const mins = Math.floor(r.time / 60), secs = r.time % 60;
+    html += '<tr><td><span class="rank-badge ' + rankClass + '">' + rankIcon + '</span></td><td><strong>' + escapeHtml(r.name) + '</strong></td><td style="font-weight:700;color:' + (r.score === 100 ? '#f57f17' : 'var(--primary)') + '">' + r.score + '</td><td>' + Math.round(r.correct / r.total * 100) + '%</td><td>' + mins + '分' + secs + '秒</td><td style="color:var(--text-light);font-size:0.85em">' + (r.date || '') + '</td></tr>';
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
 }
 
 function escapeHtml(str) {
@@ -2575,6 +2687,9 @@ document.addEventListener('keydown', (e) => {
 // ==================== 初始化 ====================
 document.addEventListener('DOMContentLoaded', async () => {
   await fetchRankings();
+  // 自动将本地存储的成绩同步到云端（恢复之前丢失的数据）
+  await autoSyncLocalToCloud();
+  await fetchRankings(); // 重新拉取同步后的数据
   renderStudyQuestions();
   renderRanking();
 });
