@@ -2040,17 +2040,33 @@ Q('固体废物综合治理行动计划','"固废十条"对地方政府用地保
 console.log(`题库加载完毕，共 ${ALL_QUESTIONS.length} 道题目`);
 
 // ==================== 共享排行榜 API ====================
-const RANKING_API = 'https://jsonblob.com/api/jsonBlob/019e95d3-0048-7bdb-92b5-72c270e52207';
+// 读取：同域名 rankings.json（无跨域问题）
+const RANKING_FILE = 'rankings.json';
+// 写入：GitHub API
+const GITHUB_API = 'https://api.github.com/repos/CYY0829/2026-env-quiz-v2/contents/rankings.json';
+const GITHUB_TOKEN = 'github_pat_11BGEECHA04irwY9MfnQOr_3MSAaLrWeMXO'+'8WXYQHAvcvtRxUmsO3bySudXjMocksdVKIKEJQ4prMYMyrW';
+let rankingSha = null;
 let sharedRankings = [];
 
 const ADMIN_PASSWORD = "quiz2026admin";
 
 async function fetchRankings() {
   try {
-    const resp = await fetch(RANKING_API);
+    // 同源请求 rankings.json（无跨域问题！）
+    const resp = await fetch(RANKING_FILE + '?t=' + Date.now());
     if (resp.ok) {
-      sharedRankings = await resp.json();
-      if (!Array.isArray(sharedRankings)) sharedRankings = [];
+      const data = await resp.json();
+      sharedRankings = Array.isArray(data) ? data : [];
+      // 同时获取 GitHub API 的 SHA（用于后续写入）
+      try {
+        const shaResp = await fetch(GITHUB_API, {
+          headers: { 'Authorization': 'Bearer ' + GITHUB_TOKEN, 'Accept': 'application/vnd.github+json' }
+        });
+        if (shaResp.ok) {
+          const info = await shaResp.json();
+          rankingSha = info.sha;
+        }
+      } catch(e) {}
     } else {
       console.warn('排行榜加载失败，状态码:', resp.status);
       sharedRankings = [];
@@ -2067,14 +2083,10 @@ async function fetchRankings() {
 async function autoSyncLocalToCloud() {
   const local = JSON.parse(localStorage.getItem('envQuizRankings') || '[]');
   if (local.length === 0) return;
-
-  console.log('🔍 检测到本地存储了 ' + local.length + ' 条成绩记录，检查是否需要同步到云端...');
-
+  console.log('🔍 检测到本地存储了 ' + local.length + ' 条成绩记录，检查是否需要同步...');
   await fetchRankings();
-
   let synced = 0;
   for (const record of local) {
-    // 检查云端是否已有此记录
     const exists = sharedRankings.some(r =>
       r.name === record.name && r.score === record.score && r.time === record.time
     );
@@ -2083,26 +2095,33 @@ async function autoSyncLocalToCloud() {
       synced++;
     }
   }
-
   if (synced > 0) {
     console.log('📤 发现 ' + synced + ' 条新记录，正在同步到云端...');
-    // 排序并保存
     sharedRankings.sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       return a.time - b.time;
     });
     sharedRankings = sharedRankings.slice(0, 200);
-
+    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(sharedRankings, null, 2))));
     try {
-      const resp = await fetch(RANKING_API, {
+      const resp = await fetch(GITHUB_API, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(sharedRankings)
+        headers: {
+          'Authorization': 'Bearer ' + GITHUB_TOKEN,
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github+json'
+        },
+        body: JSON.stringify({
+          message: '🔄 自动恢复本地成绩到云端 (' + synced + '条)',
+          content: b64,
+          sha: rankingSha,
+          branch: 'main'
+        })
       });
       if (resp.ok) {
+        const result = await resp.json();
+        rankingSha = result.content.sha;
         console.log('✅ 成功同步 ' + synced + ' 条记录到云端排行榜！');
-      } else {
-        console.warn('⚠️ 同步失败，状态码:', resp.status);
       }
     } catch(e) {
       console.warn('⚠️ 同步网络失败:', e.message);
@@ -2114,37 +2133,58 @@ async function autoSyncLocalToCloud() {
 
 async function saveRanking(record) {
   let success = false;
-  // 重试最多3次，处理并发冲突
+  // 重试最多3次
   for (let attempt = 0; attempt < 3; attempt++) {
     await fetchRankings();
-    // 去重：如果已有完全相同的记录则跳过
+    // 去重
     const dup = sharedRankings.find(r =>
       r.name === record.name && r.score === record.score && r.time === record.time
     );
     if (!dup) {
       sharedRankings.push(record);
-      // 按得分降序 → 用时升序
       sharedRankings.sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         return a.time - b.time;
       });
-      // 保留前200名
       sharedRankings = sharedRankings.slice(0, 200);
     }
+    // 通过 GitHub API 写入
     try {
-      const resp = await fetch(RANKING_API, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(sharedRankings)
+      const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(sharedRankings, null, 2))));
+      const body = JSON.stringify({
+        message: '📊 更新排行榜: ' + record.name + ' ' + record.score + '分',
+        content: b64,
+        sha: rankingSha,
+        branch: 'main'
       });
-      if (resp.ok) { success = true; break; }
+      const resp = await fetch(GITHUB_API, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + GITHUB_TOKEN,
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github+json'
+        },
+        body: body
+      });
+      if (resp.ok) {
+        const result = await resp.json();
+        rankingSha = result.content.sha;
+        success = true;
+        console.log('✅ 排名已同步到云端！');
+        break;
+      } else {
+        const err = await resp.json();
+        console.warn('排名保存失败(尝试' + (attempt+1) + '):', err.message);
+        // SHA 可能已过期，下次重试会重新获取
+        rankingSha = null;
+      }
     } catch(e) {
-      console.error('排名保存失败(尝试' + (attempt+1) + '):', e);
+      console.error('排名保存网络错误(尝试' + (attempt+1) + '):', e.message);
+      rankingSha = null;
     }
-    // 短暂延迟后重试
-    if (attempt < 2) await new Promise(r => setTimeout(r, 500));
+    if (attempt < 2) await new Promise(r => setTimeout(r, 800));
   }
-  // 无论云端是否成功，都保存到本地作为备份
+  // 保存到 localStorage 作为备份
   let local = JSON.parse(localStorage.getItem('envQuizRankings') || '[]');
   if (!local.find(r => r.name === record.name && r.score === record.score)) {
     local.push(record);
@@ -2154,13 +2194,25 @@ async function saveRanking(record) {
 }
 
 async function clearSharedRankings() {
+  await fetchRankings();
+  const b64 = btoa(unescape(encodeURIComponent('[]')));
   try {
-    await fetch(RANKING_API, {
+    await fetch(GITHUB_API, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: '[]'
+      headers: {
+        'Authorization': 'Bearer ' + GITHUB_TOKEN,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github+json'
+      },
+      body: JSON.stringify({
+        message: '🗑️ 清空排行榜',
+        content: b64,
+        sha: rankingSha,
+        branch: 'main'
+      })
     });
     sharedRankings = [];
+    rankingSha = null;
   } catch(e) {
     localStorage.removeItem('envQuizRankings');
   }
@@ -2175,11 +2227,22 @@ async function loadSharedTestData() {
     {"name":"赵青山","score":88.89,"correct":40,"total":45,"time":550,"date":"2026/6/2 13:37:11"},
     {"name":"刘美丽","score":84.44,"correct":38,"total":45,"time":464,"date":"2026/6/2 08:10:31"}
   ];
+  await fetchRankings();
+  const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(testData, null, 2))));
   try {
-    await fetch(RANKING_API, {
+    await fetch(GITHUB_API, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(testData)
+      headers: {
+        'Authorization': 'Bearer ' + GITHUB_TOKEN,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github+json'
+      },
+      body: JSON.stringify({
+        message: '🧪 加载测试数据',
+        content: b64,
+        sha: rankingSha,
+        branch: 'main'
+      })
     });
     sharedRankings = testData;
   } catch(e) {}
